@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Sample.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Sample.Models;
 
 namespace Sample
 {
@@ -38,7 +39,7 @@ namespace Sample
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddAuthentication()
                 .AddHandySignatur(options => options.IdentityLinkDomainIdentifier = "TEST");
