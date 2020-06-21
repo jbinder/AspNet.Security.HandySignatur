@@ -1,12 +1,32 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>2.1.0-alpha.1</Version>
+    <Copyright>2020, jbinder</Copyright>
+    <Authors>jbinder</Authors>
+    <Company>jbinder</Company>
+    <RepositoryUrl>https://github.com/jbinder/AspNet.Security.HandySignatur</RepositoryUrl>
+    <PackageReleaseNotes>Alpha, do not use in production!</PackageReleaseNotes>
+    <RepositoryType></RepositoryType>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <Description>Handy-Signatur authentication provider for ASP.NET Core 2.1.
+Alpha, do not use in production!</Description>
+    <PackageProjectUrl>https://github.com/jbinder/AspNet.Security.HandySignatur</PackageProjectUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
