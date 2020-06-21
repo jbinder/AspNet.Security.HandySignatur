@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Sample.Models;
 
 namespace Sample.Areas.Identity.Pages.Account
 {
@@ -114,7 +115,14 @@ namespace Sample.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
+                var user = new ApplicationUser
+                {
+                    UserName = Input.Email,
+                    Email = Input.Email,
+                    FirstName = info.Principal.Claims.First(x => x.Type == ClaimTypes.GivenName).Value,
+                    LastName = info.Principal.Claims.First(x => x.Type == ClaimTypes.Surname).Value,
+                    DateOfBirth = DateTime.Parse(info.Principal.Claims.First(x => x.Type == ClaimTypes.DateOfBirth).Value)
+                };
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
