@@ -30,6 +30,13 @@ Adapt your `Startup` class to include the following:
 
 where the `IdentityLinkDomainIdentifier` is the identifier of the requesting authority in the private sector encoded as URN, see [3].
 
+The following claims are available:
+
+* NameIdentifier
+* GivenName
+* Surname
+* Name
+* DateOfBirth
 
 
 ## References
