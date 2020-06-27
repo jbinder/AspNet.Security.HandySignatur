@@ -38,6 +38,8 @@ The following claims are available:
 * Name
 * DateOfBirth
 
+To customize the redirect views, the `RedirectToAtrustViewCreator` and `RedirectFromAtrustViewCreator` options can be used.
+
 
 ## References
 

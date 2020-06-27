@@ -29,6 +29,16 @@ namespace AspNet.Security.HandySignatur
                 throw new ArgumentException("The options instance name cannot be null or empty.", nameof(name));
             }
 
+            if (options.RedirectToAtrustViewCreator == null)
+            {
+                throw new ArgumentException("The RedirectToAtrustViewCreator cannot be null.", nameof(options));
+            }
+
+            if (options.RedirectFromAtrustViewCreator == null)
+            {
+                throw new ArgumentException("The RedirectFromAtrustViewCreator cannot be null.", nameof(options));
+            }
+
             if (options.Backchannel == null)
             {
                 options.Backchannel = new HttpClient(options.BackchannelHttpHandler ?? new HttpClientHandler());

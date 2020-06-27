@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 
 namespace AspNet.Security.HandySignatur
@@ -20,10 +21,22 @@ namespace AspNet.Security.HandySignatur
         /// </summary>
         public string IdentityLinkDomainIdentifier { get; set; }
 
+        /// <summary>
+        /// Generates the view which performs the redirect to A-Trust login page, see <see cref="HandySignaturAuthenticationDefaultViews.RedirectToAtrustViewCreator" />.
+        /// </summary>
+        public Func<HandySignaturAuthenticationOptions, string, string> RedirectToAtrustViewCreator { get; set; }
+
+        /// <summary>
+        /// Generates the view which performs the redirect back from A-Trust, see <see cref="HandySignaturAuthenticationDefaultViews.RedirectFromAtrustViewCreator" />.
+        /// </summary>
+        public Func<string, string, string, string> RedirectFromAtrustViewCreator { get; set; }
+
         public HandySignaturAuthenticationOptions()
         {
             CallbackPath = HandySignaturAuthenticationDefaults.CallbackPath;
             PreCallbackPath = HandySignaturAuthenticationDefaults.PreCallbackPath;
+            RedirectToAtrustViewCreator = HandySignaturAuthenticationDefaultViews.RedirectToAtrustViewCreator;
+            RedirectFromAtrustViewCreator = HandySignaturAuthenticationDefaultViews.RedirectFromAtrustViewCreator;
         }
     }
 }

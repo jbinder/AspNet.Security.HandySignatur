@@ -1,4 +1,6 @@
-﻿namespace AspNet.Security.HandySignatur
+﻿using Microsoft.AspNetCore.Authentication;
+
+namespace AspNet.Security.HandySignatur
 {
     /// <summary>
     /// Based upon <see href="https://github.com/aspnet-contrib/AspNet.Security.OpenId.Providers/blob/rel/2.1.0/src/AspNet.Security.OpenId/OpenIdAuthenticationDefaults.cs" />.

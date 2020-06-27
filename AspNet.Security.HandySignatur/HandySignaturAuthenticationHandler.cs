@@ -43,15 +43,7 @@ namespace AspNet.Security.HandySignatur
             var responseType = response["ResponseType"].ToString().Replace('"', '\'');
             var targetUrl = Request.GetEncodedUrl().Replace(Options.PreCallbackPath, Options.CallbackPath);
 
-            var form = $@"
-Loading... please wait.
-<form id='form' action='{targetUrl}' enctype='application/x-www-form-urlencoded' method='post'>
-    <input name='XMLResponse' type='hidden' value=""{xmlResponse}"" />
-    <input type='hidden' name='ResponseType' value='{responseType}' />
-    <!--<input type='submit' value='Zurück zur app!'>-->
-</form>
-<script>window.onload = function(){{document.forms['form'].submit();}}</script>
-";
+            var form = Options.RedirectFromAtrustViewCreator(targetUrl, xmlResponse, responseType);
 
             SetResponse(form);
 
@@ -113,22 +105,7 @@ Loading... please wait.
             var encodedRedirectUri = Convert.ToBase64String(Encoding.UTF8.GetBytes(Request.Scheme + "://" + Request.Host + properties.RedirectUri)).Replace('+', '-').Replace('/', '_');
             var dataUrl = "https://" + Request.Host + Options.PreCallbackPath + "?redirect_uri=" + encodedRedirectUri + $"&cid={properties.Items[".xsrf"]}"; // only HTTPS is accepted
 
-            var form = $@"
-Loading... please wait.
-<script>window.onload = function(){{document.forms['form'].submit();}}</script>
-<form id='form' action='https://www.a-trust.at/mobile/https-security-layer-request/default.aspx' enctype='application/x-www-form-urlencoded' method='post'>
-    <input name='XMLRequest' type='hidden' value=""<?xml version='1.0' encoding='UTF-8'?>
-        <sl:InfoboxReadRequest xmlns:sl='http://www.buergerkarte.at/namespaces/securitylayer/1.2#'>
-            <sl:InfoboxIdentifier>IdentityLink</sl:InfoboxIdentifier>
-            <sl:BinaryFileParameters ContentIsXMLEntity='true'/>
-            <sl:BoxSpecificParameters>
-                <sl:IdentityLinkDomainIdentifier>{Options.IdentityLinkDomainIdentifier}</sl:IdentityLinkDomainIdentifier>
-            </sl:BoxSpecificParameters>
-        </sl:InfoboxReadRequest>"" />
-    <input type='hidden' name='DataURL' value='{dataUrl}' />
-    <!--<input type='submit' value='Weiter zu a-trust!'>-->
-</form>
-";
+            var form = Options.RedirectToAtrustViewCreator(Options, dataUrl);
             SetResponse(form);
             return Task.CompletedTask;
         }
