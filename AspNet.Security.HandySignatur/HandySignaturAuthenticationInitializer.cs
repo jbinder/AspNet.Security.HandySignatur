@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Net.Http;
+using JetBrains.Annotations;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
 
 namespace AspNet.Security.HandySignatur
@@ -11,6 +14,13 @@ namespace AspNet.Security.HandySignatur
         where TOptions : HandySignaturAuthenticationOptions, new()
         where THandler : HandySignaturAuthenticationHandler<TOptions>
     {
+        private readonly IDataProtectionProvider _dataProtectionProvider;
+
+        public HandySignaturAuthenticationInitializer([NotNull] IDataProtectionProvider dataProtectionProvider)
+        {
+            _dataProtectionProvider = dataProtectionProvider;
+        }
+
         public void PostConfigure(string name, TOptions options)
         {
             if (options == null)
@@ -37,6 +47,18 @@ namespace AspNet.Security.HandySignatur
             if (options.RedirectFromAtrustViewCreator == null)
             {
                 throw new ArgumentException("The RedirectFromAtrustViewCreator cannot be null.", nameof(options));
+            }
+
+            if (options.DataProtectionProvider == null)
+            {
+                options.DataProtectionProvider = _dataProtectionProvider;
+            }
+
+            if (options.StateDataFormat == null)
+            {
+                var protector = options.DataProtectionProvider.CreateProtector(
+                    nameof(HandySignaturAuthenticationHandler<HandySignaturAuthenticationOptions>));
+                options.StateDataFormat = new PropertiesDataFormat(protector);
             }
 
             if (options.Backchannel == null)

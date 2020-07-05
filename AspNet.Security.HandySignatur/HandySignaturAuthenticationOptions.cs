@@ -31,6 +31,12 @@ namespace AspNet.Security.HandySignatur
         /// </summary>
         public Func<string, string, string, string> RedirectFromAtrustViewCreator { get; set; }
 
+        /// <summary>
+        /// Gets or sets the data format used to serialize the
+        /// authentication properties used for the "state" parameter.
+        /// </summary>
+        public ISecureDataFormat<AuthenticationProperties> StateDataFormat { get; set; }
+
         public HandySignaturAuthenticationOptions()
         {
             CallbackPath = HandySignaturAuthenticationDefaults.CallbackPath;

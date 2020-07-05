@@ -9,6 +9,7 @@ using System.Xml;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -58,9 +59,22 @@ namespace AspNet.Security.HandySignatur
                                                 "using an invalid method: make sure to use either GET or POST.");
             }
 
+            // Always extract the "state" parameter from the query string.
+            var state = Request.Query[HandySignaturAuthenticationConstants.Parameters.State];
+            if (string.IsNullOrEmpty(state))
+            {
+                return HandleRequestResult.Fail("The authentication response was rejected " +
+                                                "because the state parameter was missing.");
+            }
+
+            var properties = Options.StateDataFormat.Unprotect(state);
+            if (properties == null)
+            {
+                return HandleRequestResult.Fail("The authentication response was rejected " +
+                                                "because the state parameter was invalid.");
+            }
+
             // Validate the anti-forgery token
-            var items = new Dictionary<string, string> {{"LoginProvider", "HandySignatur"}, {".xsrf", Request.Query["cid"]} };
-            var properties = new AuthenticationProperties(items);
             if (!ValidateCorrelationId(properties))
             {
                 return HandleRequestResult.Fail("The authentication response was rejected " +
@@ -84,7 +98,6 @@ namespace AspNet.Security.HandySignatur
             }
 
             var principal = new ClaimsPrincipal(identity);
-            properties.RedirectUri = Encoding.UTF8.GetString(Convert.FromBase64String(Request.Query["redirect_uri"].ToString().Replace('-', '+').Replace('_', '/')));
             var ticket = new AuthenticationTicket(principal, properties, Scheme.Name);
 
             return HandleRequestResult.Success(ticket);
@@ -99,13 +112,21 @@ namespace AspNet.Security.HandySignatur
                 properties.RedirectUri = Request.Scheme + "://" + Request.Host +
                                          OriginalPathBase + Request.Path + Request.QueryString;
             }
+            else
+            {
+                // Use an absolute url, as the redirectUri be rendered in the context of A-Trust instead being redirected
+                properties.RedirectUri = Request.Scheme + "://" + Request.Host + properties.RedirectUri;
+            }
 
             GenerateCorrelationId(properties);
 
-            var encodedRedirectUri = Convert.ToBase64String(Encoding.UTF8.GetBytes(Request.Scheme + "://" + Request.Host + properties.RedirectUri)).Replace('+', '-').Replace('/', '_');
-            var dataUrl = "https://" + Request.Host + Options.PreCallbackPath + "?redirect_uri=" + encodedRedirectUri + $"&cid={properties.Items[".xsrf"]}"; // only HTTPS is accepted
+            // Only Https is accepted
+            var redirectUri = QueryHelpers.AddQueryString("https://" + Request.Host + Options.PreCallbackPath, new Dictionary<string, string>
+            {
+                {HandySignaturAuthenticationConstants.Parameters.State, Options.StateDataFormat.Protect(properties)}
+            });
 
-            var form = Options.RedirectToAtrustViewCreator(Options, dataUrl);
+            var form = Options.RedirectToAtrustViewCreator(Options, redirectUri);
             SetResponse(form);
             return Task.CompletedTask;
         }
