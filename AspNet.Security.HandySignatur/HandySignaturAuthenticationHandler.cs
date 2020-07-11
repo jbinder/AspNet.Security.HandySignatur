@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -56,7 +57,7 @@ namespace AspNet.Security.HandySignatur
             if (!string.Equals(Request.Method, "POST", StringComparison.OrdinalIgnoreCase))
             {
                 return HandleRequestResult.Fail("The authentication response was rejected because it was made " +
-                                                "using an invalid method: make sure to use either GET or POST.");
+                                                "using an invalid method: make sure to use POST.");
             }
 
             // Always extract the "state" parameter from the query string.
@@ -90,6 +91,12 @@ namespace AspNet.Security.HandySignatur
             try
             {
                 xmlDoc.LoadXml(form["XMLResponse"]);
+                if (xmlDoc.GetElementsByTagName("sl:ErrorResponse").Count > 0)
+                {
+                    var errorCode = xmlDoc.GetElementsByTagName("sl:ErrorCode")[0].InnerText;
+                    var info = xmlDoc.GetElementsByTagName("sl:Info")[0].InnerText;
+                    return HandleRequestResult.Fail($"The authentication was unsuccessful: {errorCode} - {info}");
+                }
                 identity = CreateClaimsIdentityFromXml(xmlDoc);
             } catch (Exception e)
             {
