@@ -3,13 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>2.1.0-alpha.2</Version>
-    <Copyright>2020, jbinder</Copyright>
+    <Version>2.1.0-alpha.3</Version>
+    <Copyright>2021, jbinder</Copyright>
     <Authors>jbinder</Authors>
     <Company>jbinder</Company>
     <RepositoryUrl>https://github.com/jbinder/AspNet.Security.HandySignatur</RepositoryUrl>
-    <PackageReleaseNotes>* Use the data protection stack to pass the return URI to A-Trust
-* Allow customizing the redirect views</PackageReleaseNotes>
+    <PackageReleaseNotes>* Async response processing</PackageReleaseNotes>
     <RepositoryType></RepositoryType>
     <PackageLicenseExpression></PackageLicenseExpression>
     <Description>Handy-Signatur authentication provider for ASP.NET Core 2.1.
