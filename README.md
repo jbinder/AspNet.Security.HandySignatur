@@ -9,7 +9,7 @@ Handy-Signatur [1] authentication provider for ASP.NET Core 2.1 [2].
 
 Install the NuGet package:
 
-    PM> Install-Package AspNet.Security.HandySignatur
+    PM> Install-Package AspNet.Security.HandySignatur -Version 2.1.0-alpha.2
 
 Adapt your `Startup` class to include the following:
 
