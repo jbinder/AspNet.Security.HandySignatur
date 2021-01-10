@@ -47,7 +47,7 @@ namespace AspNet.Security.HandySignatur
 
             var form = Options.RedirectFromAtrustViewCreator(targetUrl, xmlResponse, responseType);
 
-            SetResponse(form);
+            await SetResponseAsync(form);
 
             return true;
         }
@@ -110,7 +110,7 @@ namespace AspNet.Security.HandySignatur
             return HandleRequestResult.Success(ticket);
         }
 
-        protected override Task HandleChallengeAsync(AuthenticationProperties properties)
+        protected override async Task HandleChallengeAsync(AuthenticationProperties properties)
         {
             // Use the current address as the final location where the user agent
             // will be redirected to if one has not been explicitly provided.
@@ -134,16 +134,15 @@ namespace AspNet.Security.HandySignatur
             });
 
             var form = Options.RedirectToAtrustViewCreator(Options, redirectUri);
-            SetResponse(form);
-            return Task.CompletedTask;
+            await SetResponseAsync(form);
         }
 
-        private void SetResponse(string html)
+        private async Task SetResponseAsync(string html)
         {
             Response.ContentType = "text/html";
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(html)))
             {
-                stream.CopyTo(Response.Body);
+                await stream.CopyToAsync(Response.Body);
             }
         }
 
